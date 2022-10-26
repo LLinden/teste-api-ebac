@@ -28,7 +28,7 @@ describe("Testes da Funcionalidade Usuários", () => {
   it("Deve validar um usuário com email inválido", () => {
     let random = Math.floor(Math.random() * 100000000);
     let usuario = "usuario" + random;
-    let email = "teste@ebac.com.br"
+    let email = "teste@ebac.com.br";
     cy.cadastrarUsuario(usuario, email, "teste", "true").then((response) => {
       expect(response.status).to.equal(400);
       expect(response.body.message).to.equal("Este email já está sendo usado");
@@ -36,7 +36,29 @@ describe("Testes da Funcionalidade Usuários", () => {
   });
 
   it("Deve editar um usuário previamente cadastrado", () => {
-    //TODO:
+    let id;
+    let random = Math.floor(Math.random() * 100000000);
+    let usuario = "usuario" + random;
+    let email = "teste" + random + "@ebac.com.br";
+    cy.cadastrarUsuario(usuario, email, "teste", "true").then((response) => {
+      expect(response.status).to.equal(201);
+      id = response.body._id;
+
+      cy.request({
+        method: "PUT",
+        url: `usuarios/${id}`,
+        body: {
+          nome: usuario,
+          email: email,
+          password: "senha editada",
+          administrador: "false",
+        },
+        failOnStatusCode: false,
+      }).then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body.message).to.equal("Registro alterado com sucesso");
+      });
+    });
   });
 
   it("Deve deletar um usuário previamente cadastrado", () => {
