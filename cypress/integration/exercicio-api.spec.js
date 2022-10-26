@@ -62,6 +62,22 @@ describe("Testes da Funcionalidade Usuários", () => {
   });
 
   it("Deve deletar um usuário previamente cadastrado", () => {
-    //TODO:
+     let id;
+     let random = Math.floor(Math.random() * 100000000);
+     let usuario = "usuario" + random;
+     let email = "teste" + random + "@ebac.com.br";
+     cy.cadastrarUsuario(usuario, email, "teste", "true").then((response) => {
+       expect(response.status).to.equal(201);
+       id = response.body._id;
+ 
+       cy.request({
+         method: "DELETE",
+         url: `usuarios/${id}`,
+         failOnStatusCode: false,
+       }).then((response) => {
+         expect(response.status).to.eq(200);
+         expect(response.body.message).to.equal("Registro excluído com sucesso");
+       });
+     });
   });
 });
